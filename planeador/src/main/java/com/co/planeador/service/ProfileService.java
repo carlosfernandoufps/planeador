@@ -1,6 +1,6 @@
 package com.co.planeador.service;
 
-import com.co.planeador.controller.dto.ProfileResponseDto;
+import com.co.planeador.controller.dto.response.ProfileResponseDto;
 import com.co.planeador.repository.dao.ProfileDao;
 import com.co.planeador.repository.entities.Profile;
 import com.co.planeador.repository.entities.ProfileType;
