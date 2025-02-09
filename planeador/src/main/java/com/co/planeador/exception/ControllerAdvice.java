@@ -12,4 +12,10 @@ public class ControllerAdvice {
         return new ResponseEntity<>(ex.getMessage(), ex.getHttpStatus());
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleGenericException(Exception ex){
+        CustomException customException = new CustomException();
+        return new ResponseEntity<>(customException.getMessage(), customException.getHttpStatus());
+    }
+
 }

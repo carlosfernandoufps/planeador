@@ -1,6 +1,5 @@
 package com.co.planeador.controller;
 
-import com.co.planeador.repository.entities.Profile;
 import com.co.planeador.repository.entities.ProfileType;
 import com.co.planeador.repository.entities.User;
 import com.co.planeador.security.jwt.JwtUtil;
