@@ -1,6 +1,8 @@
 package com.co.planeador.controller;
 
 import com.co.planeador.controller.dto.ProfileResponseDto;
+import com.co.planeador.repository.entities.ProfileType;
+import com.co.planeador.security.annotation.DirectorRequired;
 import com.co.planeador.security.annotation.SessionRequired;
 import com.co.planeador.security.jwt.JwtUtil;
 import com.co.planeador.service.ProfileService;
@@ -12,7 +14,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,6 +34,13 @@ public class UserController {
         Integer userId = JwtUtil.getIdFromToken(noBearerToken);
         ProfileResponseDto dto = profileService.getProfileInfoByUserId(userId);
         return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
+    @DirectorRequired
+    @GetMapping("/list")
+    public ResponseEntity<List<ProfileResponseDto>> getProfilesByType(@RequestParam("profileType") ProfileType profileType){
+        List<ProfileResponseDto> profileResponseDtoList = profileService.getProfilesByProfileType(profileType);
+        return new ResponseEntity<>(profileResponseDtoList, HttpStatus.OK);
     }
 
 }
