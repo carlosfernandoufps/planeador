@@ -8,6 +8,8 @@ import com.co.planeador.service.mapper.ProfileMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ProfileService {
@@ -23,6 +25,11 @@ public class ProfileService {
     public ProfileResponseDto getProfileInfoByUserId(Integer userId){
         Profile profile = profileDao.findOneByUserId(userId);
         return profileMapper.profileToDto(profile);
+    }
+
+    public List<ProfileResponseDto> getProfilesByProfileType(ProfileType profileType){
+        List<Profile> profiles = profileDao.findByProfileType(profileType);
+        return profileMapper.profileToDto(profiles);
     }
 
 }

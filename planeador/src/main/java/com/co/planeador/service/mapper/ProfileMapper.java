@@ -4,6 +4,9 @@ import com.co.planeador.controller.dto.response.ProfileResponseDto;
 import com.co.planeador.repository.entities.Profile;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 public class ProfileMapper {
 
@@ -14,6 +17,14 @@ public class ProfileMapper {
         dto.setPhone(profile.getPhone());
         dto.setPersonalEmail(profile.getPersonalEmail());
         return dto;
+    }
+
+    public List<ProfileResponseDto> profileToDto(List<Profile> profiles){
+        List<ProfileResponseDto> dtoList = new ArrayList<>();
+        for(Profile profile: profiles){
+            dtoList.add(profileToDto(profile));
+        }
+        return dtoList;
     }
 
 

@@ -1,5 +1,7 @@
 package com.co.planeador.controller;
 
+import com.co.planeador.repository.entities.ProfileType;
+import com.co.planeador.security.annotation.DirectorRequired;
 import com.co.planeador.controller.dto.request.UpdatePasswordRequestDto;
 import com.co.planeador.controller.dto.response.ProfileResponseDto;
 import com.co.planeador.security.annotation.SessionRequired;
@@ -15,7 +17,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,6 +39,12 @@ public class UserController {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
+    @DirectorRequired
+    @GetMapping("/list")
+    public ResponseEntity<List<ProfileResponseDto>> getProfilesByType(@RequestParam("profileType") ProfileType profileType) {
+        List<ProfileResponseDto> profileResponseDtoList = profileService.getProfilesByProfileType(profileType);
+        return new ResponseEntity<>(profileResponseDtoList, HttpStatus.OK);
+    }
     @SessionRequired
     @PutMapping("/password")
     public ResponseEntity<String> updatePassword(@RequestHeader("Authorization") String token,
