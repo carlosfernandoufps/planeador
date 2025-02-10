@@ -1,9 +1,10 @@
 package com.co.planeador.controller;
 
+import com.co.planeador.controller.dto.request.UpdatePasswordRequestDto;
+import com.co.planeador.controller.dto.request.UpdateProfileRequestDto;
+import com.co.planeador.controller.dto.response.ProfileResponseDto;
 import com.co.planeador.repository.entities.ProfileType;
 import com.co.planeador.security.annotation.DirectorRequired;
-import com.co.planeador.controller.dto.request.UpdatePasswordRequestDto;
-import com.co.planeador.controller.dto.response.ProfileResponseDto;
 import com.co.planeador.security.annotation.SessionRequired;
 import com.co.planeador.security.jwt.JwtUtil;
 import com.co.planeador.service.ProfileService;
@@ -39,12 +40,15 @@ public class UserController {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-    @DirectorRequired
-    @GetMapping("/list")
-    public ResponseEntity<List<ProfileResponseDto>> getProfilesByType(@RequestParam("profileType") ProfileType profileType) {
-        List<ProfileResponseDto> profileResponseDtoList = profileService.getProfilesByProfileType(profileType);
-        return new ResponseEntity<>(profileResponseDtoList, HttpStatus.OK);
+    @SessionRequired
+    @PutMapping()
+    public ResponseEntity<ProfileResponseDto> updateProfile(@RequestHeader("Authorization") String token,
+                                                            @RequestBody UpdateProfileRequestDto requestDto){
+        Integer userId = JwtUtil.getIdFromToken( token.substring(7));
+        ProfileResponseDto responseDto = profileService.updateProfile(requestDto, userId);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
+
     @SessionRequired
     @PutMapping("/password")
     public ResponseEntity<String> updatePassword(@RequestHeader("Authorization") String token,
@@ -52,6 +56,13 @@ public class UserController {
         Integer userId = JwtUtil.getIdFromToken( token.substring(7));
         userService.updatePassword(dto, userId);
         return new ResponseEntity<>("Cambio de contraseña exitoso", HttpStatus.OK);
+    }
+
+    @DirectorRequired
+    @GetMapping("/list")
+    public ResponseEntity<List<ProfileResponseDto>> getProfilesByType(@RequestParam("profileType") ProfileType profileType) {
+        List<ProfileResponseDto> profileResponseDtoList = profileService.getProfilesByProfileType(profileType);
+        return new ResponseEntity<>(profileResponseDtoList, HttpStatus.OK);
     }
 
 }
