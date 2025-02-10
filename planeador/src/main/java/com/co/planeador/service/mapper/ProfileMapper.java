@@ -1,6 +1,6 @@
 package com.co.planeador.service.mapper;
 
-import com.co.planeador.controller.dto.ProfileResponseDto;
+import com.co.planeador.controller.dto.response.ProfileResponseDto;
 import com.co.planeador.repository.entities.Profile;
 import org.springframework.stereotype.Component;
 
