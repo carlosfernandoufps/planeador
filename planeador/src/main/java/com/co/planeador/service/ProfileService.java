@@ -1,5 +1,6 @@
 package com.co.planeador.service;
 
+import com.co.planeador.controller.dto.request.UpdateProfileRequestDto;
 import com.co.planeador.controller.dto.response.ProfileResponseDto;
 import com.co.planeador.repository.dao.ProfileDao;
 import com.co.planeador.repository.entities.Profile;
@@ -30,6 +31,16 @@ public class ProfileService {
     public List<ProfileResponseDto> getProfilesByProfileType(ProfileType profileType){
         List<Profile> profiles = profileDao.findByProfileType(profileType);
         return profileMapper.profileToDto(profiles);
+    }
+
+    public ProfileResponseDto updateProfile(UpdateProfileRequestDto dto, Integer userId){
+        Profile profile = profileDao.findOneByUserId(userId);
+        profile.setCode(dto.getCode());
+        profile.setName(dto.getName());
+        profile.setPhone(dto.getPhone());
+        profile.setPersonalEmail(dto.getPersonalEmail());
+        profileDao.save(profile);
+        return profileMapper.profileToDto(profile);
     }
 
 }
