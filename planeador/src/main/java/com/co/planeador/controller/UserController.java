@@ -1,7 +1,9 @@
 package com.co.planeador.controller;
 
+import com.co.planeador.controller.dto.request.CreateUserRequestDto;
 import com.co.planeador.controller.dto.request.UpdatePasswordRequestDto;
 import com.co.planeador.controller.dto.request.UpdateProfileRequestDto;
+import com.co.planeador.controller.dto.response.CreateUserResponseDto;
 import com.co.planeador.controller.dto.response.ProfileResponseDto;
 import com.co.planeador.repository.entities.ProfileType;
 import com.co.planeador.security.annotation.DirectorRequired;
@@ -14,6 +16,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -63,6 +66,13 @@ public class UserController {
     public ResponseEntity<List<ProfileResponseDto>> getProfilesByType(@RequestParam("profileType") ProfileType profileType) {
         List<ProfileResponseDto> profileResponseDtoList = profileService.getProfilesByProfileType(profileType);
         return new ResponseEntity<>(profileResponseDtoList, HttpStatus.OK);
+    }
+
+    @DirectorRequired
+    @PostMapping()
+    public ResponseEntity<CreateUserResponseDto> createUser(@RequestBody CreateUserRequestDto dto){
+        CreateUserResponseDto responseDto = userService.createUser(dto);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
 }

@@ -2,10 +2,10 @@
 
 -- Primero, insertamos un par de usuarios en la tabla user
 INSERT INTO users (institutional_email, password)
-VALUES ('teacher@mail.com', 'passTeacher');
+VALUES ('teacher@mail.com', '$2b$12$gaNAeUT/yn/IBG1XDAWCsuLyXmbz9BLpTdyCbFYur43tSU7HqxH96');
 
 INSERT INTO users (institutional_email, password)
-VALUES ('director@mail.com', 'passDirector');
+VALUES ('director@mail.com', '$2b$12$oa/AWJIz2tth05.M0wswAOZ9POZgGwe.kMMFIYAuB/zM7/WV7phRK');
 
 
 -- Luego, insertamos perfiles en la tabla profile
