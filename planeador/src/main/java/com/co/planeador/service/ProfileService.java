@@ -1,10 +1,14 @@
 package com.co.planeador.service;
 
+import com.co.planeador.controller.dto.request.CreateUserRequestDto;
 import com.co.planeador.controller.dto.request.UpdateProfileRequestDto;
 import com.co.planeador.controller.dto.response.ProfileResponseDto;
 import com.co.planeador.repository.dao.ProfileDao;
+import com.co.planeador.repository.entities.Director;
 import com.co.planeador.repository.entities.Profile;
 import com.co.planeador.repository.entities.ProfileType;
+import com.co.planeador.repository.entities.Teacher;
+import com.co.planeador.repository.entities.User;
 import com.co.planeador.service.mapper.ProfileMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -41,6 +45,17 @@ public class ProfileService {
         profile.setPersonalEmail(dto.getPersonalEmail());
         profileDao.save(profile);
         return profileMapper.profileToDto(profile);
+    }
+
+    public Profile createProfile(Integer userId, CreateUserRequestDto dto){
+        Profile profile = dto.getProfileType().equals(ProfileType.DIRECTOR) ? new Director() : new Teacher();
+        profile.setUserId(userId);
+        profile.setName(dto.getName());
+        profile.setProfileType(dto.getProfileType());
+        profile.setCode(null == dto.getCode() ? "" : dto.getCode());
+        profile.setPhone(null == dto.getPhone() ? "" : dto.getPhone());
+        profile.setPersonalEmail(null == dto.getPersonalEmail() ? "" : dto.getPersonalEmail());
+        return profileDao.save(profile);
     }
 
 }
