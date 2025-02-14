@@ -52,7 +52,7 @@ public class SemesterService {
     private boolean doesSemesterCollidesWithCreatedSemesters(Semester semester){
         List<Semester> createdSemesters = getSemesters();
         for(Semester createdSemester: createdSemesters){
-            if(createdSemester.getId().equals(semester.getId())){
+            if(null != semester.getId() && createdSemester.getId().equals(semester.getId())){
                 continue;
             }
             if(doesSemesterCollide(createdSemester, semester)){
@@ -72,6 +72,21 @@ public class SemesterService {
                 || semester.getEndDate().isEqual(semester.getStartDate());
     }
 
+    public Semester createSemester(Semester semester){
+        if(null != semester.getId()){
+            throw new CustomException("asignación de ID no es válida");
+        }
+        if(null == semester.getName() || null == semester.getStartDate() || null == semester.getEndDate()){
+            throw new CustomException("Faltan datos requeridos");
+        }
+        if(isNotValidGapDate(semester)){
+            throw new CustomException("La fecha final del semestre no puede ser menor o igual a la fecha de inicio");
+        }
+        if(doesSemesterCollidesWithCreatedSemesters(semester)) {
+            throw new CustomException("El rango de fechas del semestre se solapa con otro ya existente");
+        }
+        return semesterDao.save(semester);
+    }
 
 
 }
