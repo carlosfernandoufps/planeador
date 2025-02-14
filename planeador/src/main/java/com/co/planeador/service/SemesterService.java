@@ -3,6 +3,7 @@ package com.co.planeador.service;
 import com.co.planeador.exception.CustomException;
 import com.co.planeador.repository.dao.SemesterDao;
 import com.co.planeador.repository.entities.Semester;
+import com.co.planeador.service.util.Utilities;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,5 +27,51 @@ public class SemesterService {
     public List<Semester> getSemesters(){
         return semesterDao.findAllByOrderByStartDateDesc();
     }
+
+    public Semester updateSemester(Integer idSemester, Semester request){
+        Semester semester = semesterDao.findById(idSemester)
+                .orElseThrow(() -> new CustomException("No existe semestre con id: " + idSemester));
+        if(null != request.getStartDate()){
+            semester.setStartDate(request.getStartDate());
+        }
+        if(null != request.getEndDate()){
+            semester.setEndDate(request.getEndDate());
+        }
+        if(isNotValidGapDate(semester)){
+            throw new CustomException("La fecha final del semestre no puede ser menor o igual a la fecha de inicio");
+        }
+        if(doesSemesterCollidesWithCreatedSemesters(semester)) {
+            throw new CustomException("El rango de fechas del semestre se solapa con otro ya existente");
+        }
+        if(Utilities.isNotNullOrEmptyString(request.getName())){
+            semester.setName(request.getName());
+        }
+        return semesterDao.save(semester);
+    }
+
+    private boolean doesSemesterCollidesWithCreatedSemesters(Semester semester){
+        List<Semester> createdSemesters = getSemesters();
+        for(Semester createdSemester: createdSemesters){
+            if(createdSemester.getId().equals(semester.getId())){
+                continue;
+            }
+            if(doesSemesterCollide(createdSemester, semester)){
+                return Boolean.TRUE;
+            }
+        }
+        return Boolean.FALSE;
+    }
+
+    private boolean doesSemesterCollide(Semester semester1, Semester semester2) {
+        return semester1.getStartDate().isBefore(semester2.getEndDate())
+                && semester2.getStartDate().isBefore(semester1.getEndDate());
+    }
+
+    private boolean isNotValidGapDate(Semester semester){
+        return semester.getEndDate().isBefore(semester.getStartDate())
+                || semester.getEndDate().isEqual(semester.getStartDate());
+    }
+
+
 
 }

@@ -43,6 +43,9 @@ public class UserService {
     }
 
     public CreateUserResponseDto createUser(CreateUserRequestDto dto){
+        if(null == dto.getInstitutionalEmail() || null == dto.getProfileType() || null == dto.getName()){
+            throw new CustomException("Faltan datos requeridos");
+        }
         String password = PasswordUtil.generateRandomPassword();
         String encryptedPassword = PasswordUtil.encodePassword(password);
         User user = new User();
