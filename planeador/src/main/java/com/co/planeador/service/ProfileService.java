@@ -10,6 +10,7 @@ import com.co.planeador.repository.entities.ProfileType;
 import com.co.planeador.repository.entities.Teacher;
 import com.co.planeador.repository.entities.User;
 import com.co.planeador.service.mapper.ProfileMapper;
+import com.co.planeador.service.util.Utilities;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -39,12 +40,20 @@ public class ProfileService {
 
     public ProfileResponseDto updateProfile(UpdateProfileRequestDto dto, Integer userId){
         Profile profile = profileDao.findOneByUserId(userId);
-        profile.setCode(dto.getCode());
-        profile.setName(dto.getName());
-        profile.setPhone(dto.getPhone());
-        profile.setPersonalEmail(dto.getPersonalEmail());
-        profileDao.save(profile);
-        return profileMapper.profileToDto(profile);
+        if(Utilities.isNotNullOrEmptyString(dto.getCode())){
+            profile.setCode(dto.getCode());
+        }
+        if(Utilities.isNotNullOrEmptyString(dto.getName())){
+            profile.setName(dto.getName());
+        }
+        if(Utilities.isNotNullOrEmptyString(dto.getPhone())){
+            profile.setName(dto.getPhone());
+        }
+        if(Utilities.isNotNullOrEmptyString(dto.getPersonalEmail())){
+            profile.setName(dto.getPersonalEmail());
+        }
+        Profile profileSaved = profileDao.save(profile);
+        return profileMapper.profileToDto(profileSaved);
     }
 
     public Profile createProfile(Integer userId, CreateUserRequestDto dto){
