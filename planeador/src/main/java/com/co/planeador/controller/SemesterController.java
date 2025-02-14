@@ -55,4 +55,11 @@ public class SemesterController {
         return new ResponseEntity<>(semesterUpdated, HttpStatus.OK);
     }
 
+    @SessionRequired
+    @GetMapping("/before")
+    public ResponseEntity<List<Semester>> getOldSemesters(){
+        List<Semester> semesters = semesterService.getSemestersBeforeNow();
+        return new ResponseEntity<>(semesters, HttpStatus.OK);
+    }
+
 }

@@ -89,4 +89,7 @@ public class SemesterService {
     }
 
 
+    public List<Semester> getSemestersBeforeNow() {
+        return semesterDao.findByEndDateBefore(LocalDate.now());
+    }
 }
