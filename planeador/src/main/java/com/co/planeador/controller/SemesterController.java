@@ -9,6 +9,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,6 +45,13 @@ public class SemesterController {
     public ResponseEntity<Semester> updateSemester(@RequestParam("idSemester") Integer idSemester,
                                                    @RequestBody Semester request){
         Semester semesterUpdated = semesterService.updateSemester(idSemester, request);
+        return new ResponseEntity<>(semesterUpdated, HttpStatus.OK);
+    }
+
+    @DirectorRequired
+    @PostMapping
+    public ResponseEntity<Semester> createSemester(@RequestBody Semester request){
+        Semester semesterUpdated = semesterService.createSemester(request);
         return new ResponseEntity<>(semesterUpdated, HttpStatus.OK);
     }
 
