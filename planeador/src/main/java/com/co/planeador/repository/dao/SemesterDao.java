@@ -15,4 +15,6 @@ public interface SemesterDao extends JpaRepository<Semester, Integer> {
 
     List<Semester> findAllByOrderByStartDateDesc();
 
+    List<Semester> findByEndDateBefore(LocalDate specificDate);
+
 }
