@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Descargar Microcurrículo</title>
+</head>
+<body>
+<input type="number" id="courseId" placeholder="ID del curso">
+<button onclick="downloadFile()">Descargar</button>
+
+<script>
+    async function downloadFile() {
+        const courseId = document.getElementById('courseId').value;
+        if (!courseId) return alert('Ingresa un ID');
+
+        try {
+            const response = await fetch(`http://localhost:8080/course/microcurriculum?idCourse=${courseId}`);
+            if (!response.ok) throw new Error('Error HTTP: ' + response.status);
+
+            const data = await response.json();
+            console.log("Base64 recibido:", data.content); // Verifica en consola
+
+            // Decodificación mejorada
+            const blob = base64ToBlob(data.content, data.mimeType);
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = data.fileName;
+            a.click();
+
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            alert('Error: ' + error.message);
+        }
+    }
+
+    function base64ToBlob(base64, mimeType) {
+        const raw = atob(base64);
+        const bytes = new Uint8Array(raw.length);
+
+        for (let i = 0; i < raw.length; i++) {
+            bytes[i] = raw.charCodeAt(i);
+        }
+
+        return new Blob([bytes], { type: mimeType });
+    }
+</script>
+</body>
+</html>
