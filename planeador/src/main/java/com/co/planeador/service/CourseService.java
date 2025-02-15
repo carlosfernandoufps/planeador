@@ -1,6 +1,7 @@
 package com.co.planeador.service;
 
 import com.co.planeador.controller.dto.request.CreateCourseRequestDto;
+import com.co.planeador.controller.dto.request.UpdateCourseRequestDto;
 import com.co.planeador.controller.dto.response.GetCourseResponseDto;
 import com.co.planeador.controller.dto.response.GetMicrocurriculumResponse;
 import com.co.planeador.exception.CustomException;
@@ -8,6 +9,7 @@ import com.co.planeador.repository.dao.CourseDao;
 import com.co.planeador.repository.dto.CourseInfoDto;
 import com.co.planeador.repository.entities.Course;
 import com.co.planeador.repository.entities.DocType;
+import com.co.planeador.service.util.Utilities;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -53,6 +55,26 @@ public class CourseService {
             responseList.add(getCourseResponseDto(course));
         }
         return responseList;
+    }
+
+    public GetCourseResponseDto updateCourse(Integer courseId, UpdateCourseRequestDto dto){
+        Course course = courseDao.findById(courseId).
+                orElseThrow(() -> new CustomException("No existe curso con id: " + courseId));
+        if(Utilities.isNotNullOrEmptyString(dto.getCourseName())){
+            course.setName(dto.getCourseName());
+        }
+        if(Utilities.isNotNullOrEmptyString(dto.getDescription())){
+            course.setDescription(dto.getDescription());
+        }
+        if(Utilities.isNotNullOrEmptyString(dto.getCode())){
+            course.setCode(dto.getDescription());
+        }
+        if(null != dto.getFileContent() && null != dto.getFileType()){
+            course.setMicrocurriculum(dto.getFileContent());
+            course.setDocType(dto.getFileType().equalsIgnoreCase(DocType.WORD.name()) ? DocType.WORD : DocType.PDF);
+        }
+        Course courseSaved = courseDao.save(course);
+        return getCourseResponseDto(courseSaved);
     }
 
     private GetMicrocurriculumResponse getGetMicrocurriculumResponse(Course course) {
