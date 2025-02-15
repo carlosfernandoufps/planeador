@@ -1,6 +1,7 @@
 package com.co.planeador.controller;
 
 import com.co.planeador.controller.dto.request.CreateCourseRequestDto;
+import com.co.planeador.controller.dto.request.UpdateCourseRequestDto;
 import com.co.planeador.controller.dto.response.GetCourseResponseDto;
 import com.co.planeador.controller.dto.response.GetMicrocurriculumResponse;
 import com.co.planeador.security.annotation.DirectorRequired;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,6 +48,14 @@ public class CourseController {
     public ResponseEntity<List<GetCourseResponseDto>> getCourses(){
         List<GetCourseResponseDto> courses = courseService.getCourses();
         return new ResponseEntity<>(courses, HttpStatus.OK);
+    }
+
+    @DirectorRequired
+    @PutMapping()
+    public ResponseEntity<GetCourseResponseDto> updateCourse(@RequestParam("idCourse") Integer idCourse,
+                                                             @RequestBody UpdateCourseRequestDto dto){
+        GetCourseResponseDto response = courseService.updateCourse(idCourse, dto);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }
