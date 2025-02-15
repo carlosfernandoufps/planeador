@@ -1,6 +1,7 @@
 package com.co.planeador.service;
 
 import com.co.planeador.controller.dto.response.GetAssignmentForDirectorResponseDto;
+import com.co.planeador.controller.dto.response.GetAssignmentForTeacherResponseDto;
 import com.co.planeador.exception.CustomException;
 import com.co.planeador.repository.dao.AssignmentDao;
 import com.co.planeador.repository.dao.CourseDao;
@@ -43,6 +44,34 @@ public class AssignmentService {
             responseDtoList.add(buildGetAssignmentForDirectorResponseDto(assignment));
         }
         return responseDtoList;
+    }
+
+    public List<GetAssignmentForTeacherResponseDto> getSemesterAssignmentsOfTeachers(Integer semesterId, Integer userId,
+                                                                                     Integer pageNumber, Integer pageSize){
+        Teacher teacher = (Teacher) profileDao.findOneByUserId(userId);
+        List<Assignment> assignments;
+        List<GetAssignmentForTeacherResponseDto> response = new ArrayList<>();
+        if(isValidPageableRequest(pageNumber, pageSize)){
+            Page<Assignment> assignmentPage = assignmentDao.findBySemesterIdAndTeacherId(semesterId, teacher.getId(),
+                    PageRequest.of(pageNumber, pageSize, Sort.by("id").ascending()));
+            assignments = assignmentPage.stream().toList();
+        }else {
+            assignments = assignmentDao.findBySemesterIdAndTeacherId(semesterId, teacher.getId());
+        }
+        for(Assignment assignment: assignments){
+            response.add(buildGetAssignmentForTeacherResponseDto(assignment));
+        }
+        return response;
+    }
+
+    private GetAssignmentForTeacherResponseDto buildGetAssignmentForTeacherResponseDto(Assignment assignment){
+        CourseInfoDto courseInfoDto = courseDao.getCourseById(assignment.getCourseId());
+        GetAssignmentForTeacherResponseDto dto = new GetAssignmentForTeacherResponseDto();
+        dto.setCourseId(assignment.getCourseId());
+        dto.setId(assignment.getId());
+        dto.setCourseName(courseInfoDto.getName());
+        dto.setGroup(assignment.getGroupName());
+        return dto;
     }
 
     private GetAssignmentForDirectorResponseDto buildGetAssignmentForDirectorResponseDto(Assignment assignment){
