@@ -5,10 +5,14 @@ import com.co.planeador.controller.dto.response.GetCourseResponseDto;
 import com.co.planeador.controller.dto.response.GetMicrocurriculumResponse;
 import com.co.planeador.exception.CustomException;
 import com.co.planeador.repository.dao.CourseDao;
+import com.co.planeador.repository.dto.CourseInfoDto;
 import com.co.planeador.repository.entities.Course;
 import com.co.planeador.repository.entities.DocType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +46,15 @@ public class CourseService {
         return getCourseResponseDto(courseSaved);
     }
 
+    public List<GetCourseResponseDto> getCourses(){
+        List<GetCourseResponseDto> responseList = new ArrayList<>();
+        List<CourseInfoDto> courses = courseDao.getCoursesInfo();
+        for(CourseInfoDto course: courses){
+            responseList.add(getCourseResponseDto(course));
+        }
+        return responseList;
+    }
+
     private GetMicrocurriculumResponse getGetMicrocurriculumResponse(Course course) {
         GetMicrocurriculumResponse response = new GetMicrocurriculumResponse();
         response.setContent(course.getMicrocurriculum());
@@ -63,6 +76,15 @@ public class CourseService {
         dto.setName(course.getName());
         dto.setDescription(course.getDescription());
         return dto;
+    }
+
+    private GetCourseResponseDto getCourseResponseDto(CourseInfoDto dto){
+        GetCourseResponseDto courseResponse = new GetCourseResponseDto();
+        courseResponse.setName(dto.getName());
+        courseResponse.setCode(dto.getCode());
+        courseResponse.setId(dto.getId());
+        courseResponse.setDescription(dto.getDescription());
+        return courseResponse;
     }
 
 }
