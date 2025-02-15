@@ -1,5 +1,7 @@
 package com.co.planeador.service;
 
+import com.co.planeador.controller.dto.request.CreateCourseRequestDto;
+import com.co.planeador.controller.dto.response.GetCourseResponseDto;
 import com.co.planeador.controller.dto.response.GetMicrocurriculumResponse;
 import com.co.planeador.exception.CustomException;
 import com.co.planeador.repository.dao.CourseDao;
@@ -27,6 +29,19 @@ public class CourseService {
         return getGetMicrocurriculumResponse(course);
     }
 
+    public GetCourseResponseDto createCourse(CreateCourseRequestDto dto){
+        Course course = new Course();
+        course.setName(dto.getCourseName());
+        course.setDescription(null != dto.getDescription() ? dto.getDescription(): "");
+        course.setCode(null != dto.getCode() ? dto.getDescription(): "");
+        if(null != dto.getFileContent() && null != dto.getFileType()){
+            course.setMicrocurriculum(dto.getFileContent());
+            course.setDocType(dto.getFileType().equalsIgnoreCase(DocType.WORD.name()) ? DocType.WORD : DocType.PDF);
+        }
+        Course courseSaved = courseDao.save(course);
+        return getCourseResponseDto(courseSaved);
+    }
+
     private GetMicrocurriculumResponse getGetMicrocurriculumResponse(Course course) {
         GetMicrocurriculumResponse response = new GetMicrocurriculumResponse();
         response.setContent(course.getMicrocurriculum());
@@ -39,6 +54,15 @@ public class CourseService {
             response.setMimeType(PDF_MIME_TYPE);
         }
         return response;
+    }
+
+    private GetCourseResponseDto getCourseResponseDto(Course course){
+        GetCourseResponseDto dto = new GetCourseResponseDto();
+        dto.setId(course.getId());
+        dto.setCode(course.getCode());
+        dto.setName(course.getName());
+        dto.setDescription(course.getDescription());
+        return dto;
     }
 
 }

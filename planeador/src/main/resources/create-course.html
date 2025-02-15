@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cargar Microcurrículo</title>
+</head>
+<body>
+<h1>Crear Nuevo Curso</h1>
+<form id="courseForm">
+    <label for="courseName">Nombre del Curso:</label>
+    <input type="text" id="courseName" required><br><br>
+
+    <label for="fileType">Tipo de Archivo:</label>
+    <input type="checkbox" id="fileType" name="fileType" value="word"> Word
+    <input type="checkbox" id="fileType" name="fileType" value="pdf"> PDF<br><br>
+
+    <label for="fileInput">Seleccionar Archivo:</label>
+    <input type="file" id="fileInput" accept=".docx,.pdf" required><br><br>
+
+    <button type="submit">Crear Curso</button>
+</form>
+
+<script>
+    document.getElementById('courseForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const courseName = document.getElementById('courseName').value;
+        const fileType = document.querySelector('input[name="fileType"]:checked').value;
+        const fileInput = document.getElementById('fileInput').files[0];
+
+        if (!courseName || !fileType || !fileInput) {
+            alert('Completa todos los campos');
+            return;
+        }
+
+        // Convertir archivo a base64
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+            const base64 = event.target.result.split(',')[1]; // Remover el prefijo "data:..."
+
+            // Enviar al backend
+            try {
+                const response = await fetch('http://localhost:8080/course', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        courseName,
+                        fileContent: base64,
+                        fileType
+                    })
+                });
+
+                if (!response.ok) throw new Error('Error en la respuesta del servidor');
+
+                const data = await response.json();
+                alert(data.message + " ID del curso: " + data.courseId);
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        };
+        reader.readAsDataURL(fileInput);
+    });
+</script>
+</body>
+</html>
