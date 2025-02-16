@@ -68,3 +68,44 @@ INSERT INTO course (name, description, code, microcurriculum) VALUES ('Fundament
 org.h2.jdbc.JdbcSQLDataException: Valor demasiado largo para la columna "MICROCURRICULUM CHARACTER VARYING(255)": "'UEsDBBQAAAAIAMaNlVfFLRg5RgAAAEYAAAAIAAAAY29udGVudC54bWztkk1LxDAQhe8F/0PIfWunH1C... (456)"
 Value too long for column "MICROCURRICULUM CHARACTER VARYING(255)": "'UEsDBBQAAAAIAMaNlVfFLRg5RgAAAEYAAAAIAAAAY29udGVudC54bWztkk1LxDAQhe8F/0PIfWunH1C... (456)"; SQL statement:
 INSERT INTO course (name, description, code, microcurriculum) VALUES ('Fundamentos de programaciÃ³n', 'Lo bÃ¡sico de programaciÃ³n', '1150000', 'UEsDBBQAAAAIAMaNlVfFLRg5RgAAAEYAAAAIAAAAY29udGVudC54bWztkk1LxDAQhe8F/0PIfWunH1CLrFhQvHgQ8SAO2WxCm0xmwkwK+u87bVHw4EFB8DCTvPc8eZPJ6XppO6cVj5Fc0aBWMw2KXKvIlQ3e6nXxcrfQDXrZ9z6S6TqSgK5WU8k4aA6p7gJ0kZv6uYhRwWp5M9OQmHqXGJ5nW6s3ZJj3z3sHk1NvLgE9Hv0wQ7l3sVcXJ6CQm7p8Tj6j+HCXh0P+J1k7e9k9Sf5J0Jk9h3TgI3sT+4yqB/8FUEsBAh4DFAAAAAgAxo2VV8UtGDlGAAAARgAAAAgAJAAAAAAAAAAgAAAAAAAAAGNvbnRlbnQueG1sCgAgAAAAAAABABgAAADX4S2y0swBkQO/6CvSzAGRA7/oK9LMzAFQSwUGAAAAAAEAAQBLAAAAZQAAAAAA') [22001-232]
+2025-02-16 15:03:53.523371-05:00 database: close
+org.h2.message.DbException: IO Exception: "Closing"
+IO Exception: "Closing" [90028-232]
+	at org.h2.message.DbException.get(DbException.java:212)
+	at org.h2.mvstore.db.Store.close(Store.java:374)
+	at org.h2.engine.Database.closeOpenFilesAndUnlock(Database.java:1292)
+	at org.h2.engine.Database.closeImpl(Database.java:1254)
+	at org.h2.engine.Database.close(Database.java:1173)
+	at org.h2.engine.Database.close(Database.java:1150)
+	at org.h2.engine.Database.removeSession(Database.java:1077)
+	at org.h2.engine.SessionLocal.close(SessionLocal.java:916)
+	at org.h2.jdbc.JdbcConnection.close(JdbcConnection.java:390)
+	at com.zaxxer.hikari.pool.PoolBase.quietlyCloseConnection(PoolBase.java:139)
+	at com.zaxxer.hikari.pool.HikariPool.lambda$closeConnection$1(HikariPool.java:435)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:833)
+Caused by: org.h2.jdbc.JdbcSQLNonTransientException: IO Exception: "Closing"
+IO Exception: "Closing" [90028-232]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:566)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	... 14 more
+Caused by: org.h2.mvstore.MVStoreException: java.lang.AssertionError [2.3.232/3]
+	at org.h2.mvstore.DataUtils.newMVStoreException(DataUtils.java:996)
+	at org.h2.mvstore.MVStore.executeFilestoreOperation(MVStore.java:926)
+	at org.h2.mvstore.RandomAccessStore.compactMoveChunks(RandomAccessStore.java:463)
+	at org.h2.mvstore.RandomAccessStore.compactStore(RandomAccessStore.java:443)
+	at org.h2.mvstore.FileStore.compactStore(FileStore.java:890)
+	at org.h2.mvstore.FileStore.stop(FileStore.java:275)
+	at org.h2.mvstore.MVStore.closeStore(MVStore.java:693)
+	at org.h2.mvstore.MVStore.close(MVStore.java:643)
+	at org.h2.mvstore.db.Store.close(Store.java:364)
+	... 12 more
+Caused by: java.lang.AssertionError
+	at org.h2.mvstore.RandomAccessStore.moveChunkInside(RandomAccessStore.java:630)
+	at org.h2.mvstore.RandomAccessStore.compactMoveChunks(RandomAccessStore.java:569)
+	at org.h2.mvstore.RandomAccessStore.compactMoveChunks(RandomAccessStore.java:481)
+	at org.h2.mvstore.RandomAccessStore.lambda$compactMoveChunks$1(RandomAccessStore.java:468)
+	at org.h2.mvstore.FileStore.executeFileStoreOperation(FileStore.java:1893)
+	at org.h2.mvstore.MVStore.executeFilestoreOperation(MVStore.java:922)
+	... 19 more
