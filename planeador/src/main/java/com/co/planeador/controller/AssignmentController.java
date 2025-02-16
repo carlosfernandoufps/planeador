@@ -1,5 +1,6 @@
 package com.co.planeador.controller;
 
+import com.co.planeador.controller.dto.request.CreateAssignmentRequestDto;
 import com.co.planeador.controller.dto.response.GetAssignmentForDirectorResponseDto;
 import com.co.planeador.controller.dto.response.GetAssignmentForTeacherResponseDto;
 import com.co.planeador.security.annotation.DirectorRequired;
@@ -11,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,6 +46,13 @@ public class AssignmentController {
                                                                                          @RequestParam(value = "size", required = false) Integer size){
         Integer userId = JwtUtil.getIdFromToken( token.substring(7));
         List<GetAssignmentForTeacherResponseDto> response = assignmentService.getSemesterAssignmentsOfTeachers(idSemester, userId, page, size);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DirectorRequired
+    @PostMapping()
+    public ResponseEntity<GetAssignmentForDirectorResponseDto> createAssignment(@RequestBody CreateAssignmentRequestDto dto){
+        GetAssignmentForDirectorResponseDto response = assignmentService.createAssignment(dto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

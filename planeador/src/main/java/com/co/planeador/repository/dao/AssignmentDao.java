@@ -13,6 +13,7 @@ public interface AssignmentDao extends JpaRepository<Assignment, Integer> {
     List<Assignment> findBySemesterId(Integer semesterId);
     Page<Assignment> findBySemesterIdAndTeacherId(Integer semesterId, Integer teacherId, Pageable pageable);
     List<Assignment> findBySemesterIdAndTeacherId(Integer semesterId, Integer teacherId);
+    List<Assignment> findBySemesterIdAndCourseId(Integer semesterId, Integer courseId);
 
 
 }
