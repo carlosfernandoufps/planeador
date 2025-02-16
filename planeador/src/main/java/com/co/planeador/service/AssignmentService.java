@@ -8,7 +8,6 @@ import com.co.planeador.repository.dao.AssignmentDao;
 import com.co.planeador.repository.dao.CourseDao;
 import com.co.planeador.repository.dao.ProfileDao;
 import com.co.planeador.repository.dao.SemesterDao;
-import com.co.planeador.repository.dao.UserDao;
 import com.co.planeador.repository.dto.CourseInfoDto;
 import com.co.planeador.repository.entities.Assignment;
 import com.co.planeador.repository.entities.Profile;
@@ -28,7 +27,6 @@ import java.util.List;
 public class AssignmentService {
 
     private final AssignmentDao assignmentDao;
-    private final UserDao userDao;
     private final ProfileDao profileDao;
     private final CourseDao courseDao;
     private final SemesterDao semesterDao;
@@ -76,6 +74,14 @@ public class AssignmentService {
         assignment.setSemesterId(dto.getSemesterId());
         Assignment assignmentSaved = assignmentDao.save(assignment);
         return buildGetAssignmentForDirectorResponseDto(assignmentSaved);
+    }
+
+    public void deleteAssignment(Integer assignmentId){
+        if(assignmentDao.existsById(assignmentId)){
+            assignmentDao.deleteById(assignmentId);
+        }else{
+            throw new CustomException("No existe asignación con id: " + assignmentId);
+        }
     }
 
     private void validateNewAssignment(CreateAssignmentRequestDto dto){
