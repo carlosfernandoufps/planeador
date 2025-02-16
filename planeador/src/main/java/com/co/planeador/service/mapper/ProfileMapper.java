@@ -16,6 +16,7 @@ public class ProfileMapper {
         dto.setName(profile.getName());
         dto.setPhone(profile.getPhone());
         dto.setPersonalEmail(profile.getPersonalEmail());
+        dto.setId(profile.getId());
         return dto;
     }
 
