@@ -13,3 +13,4 @@ Este proyecto requiere Java 17. En caso de tenerlo descargado o instalado seguir
 
 1. A nivel de raíz del proyecto ejecutar el comando: `java -jar planeador-0.0.1-SNAPSHOT`
 2. Acceder a la documentación: http://localhost:8080/swagger-ui/index.html#/
+3. Base de datos embedida en http://localhost:8080/h2-console
