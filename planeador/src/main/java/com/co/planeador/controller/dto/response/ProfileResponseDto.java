@@ -10,6 +10,7 @@ import lombok.Setter;
 public class ProfileResponseDto {
 
     private Integer id;
+    private String institutionalEmail;
     private String name;
     private String personalEmail;
     private String phone;

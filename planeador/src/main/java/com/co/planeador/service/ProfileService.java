@@ -4,11 +4,11 @@ import com.co.planeador.controller.dto.request.CreateUserRequestDto;
 import com.co.planeador.controller.dto.request.UpdateProfileRequestDto;
 import com.co.planeador.controller.dto.response.ProfileResponseDto;
 import com.co.planeador.repository.dao.ProfileDao;
+import com.co.planeador.repository.dto.ProfileUserDto;
 import com.co.planeador.repository.entities.Director;
 import com.co.planeador.repository.entities.Profile;
 import com.co.planeador.repository.entities.ProfileType;
 import com.co.planeador.repository.entities.Teacher;
-import com.co.planeador.repository.entities.User;
 import com.co.planeador.service.mapper.ProfileMapper;
 import com.co.planeador.service.util.Utilities;
 import lombok.RequiredArgsConstructor;
@@ -29,12 +29,12 @@ public class ProfileService {
     }
 
     public ProfileResponseDto getProfileInfoByUserId(Integer userId){
-        Profile profile = profileDao.findOneByUserId(userId);
-        return profileMapper.profileToDto(profile);
+        ProfileUserDto profileUserDto = profileDao.getProfileUserInfo(userId);
+        return profileMapper.profileToDto(profileUserDto);
     }
 
     public List<ProfileResponseDto> getProfilesByProfileType(ProfileType profileType){
-        List<Profile> profiles = profileDao.findByProfileType(profileType);
+        List<ProfileUserDto> profiles = profileDao.getProfileUserInfoByProfileType(profileType);
         return profileMapper.profileToDto(profiles);
     }
 
