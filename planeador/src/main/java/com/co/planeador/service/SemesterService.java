@@ -28,6 +28,11 @@ public class SemesterService {
         return semesterDao.findAllByOrderByStartDateDesc();
     }
 
+    public Semester getSemesterById(Integer semesterId){
+        return semesterDao.findById(semesterId).orElseThrow(() ->
+                new CustomException("No existe semestre con id: " + semesterId));
+    }
+
     public Semester updateSemester(Integer idSemester, Semester request){
         Semester semester = semesterDao.findById(idSemester)
                 .orElseThrow(() -> new CustomException("No existe semestre con id: " + idSemester));
