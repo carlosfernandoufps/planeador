@@ -66,4 +66,11 @@ public class CourseController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @SessionRequired
+    @GetMapping("/id")
+    @Operation(summary = "Obtiene la info de un curso por su id", description = "Requiere Sesión")
+    public ResponseEntity<GetCourseResponseDto> getCourseById(@RequestParam("idCourse") Integer idCourse){
+        GetCourseResponseDto response = courseService.getCourseById(idCourse);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

@@ -47,10 +47,10 @@ public class ProfileService {
             profile.setName(dto.getName());
         }
         if(Utilities.isNotNullOrEmptyString(dto.getPhone())){
-            profile.setName(dto.getPhone());
+            profile.setPhone(dto.getPhone());
         }
         if(Utilities.isNotNullOrEmptyString(dto.getPersonalEmail())){
-            profile.setName(dto.getPersonalEmail());
+            profile.setPersonalEmail(dto.getPersonalEmail());
         }
         Profile profileSaved = profileDao.save(profile);
         return profileMapper.profileToDto(profileSaved);

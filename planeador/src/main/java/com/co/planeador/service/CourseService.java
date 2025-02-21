@@ -35,11 +35,20 @@ public class CourseService {
         return getGetMicrocurriculumResponse(course);
     }
 
+    public GetCourseResponseDto getCourseById(Integer idCourse){
+        if(courseDao.existsById(idCourse)){
+            CourseInfoDto courseInfo = courseDao.getCourseById(idCourse);
+            return getCourseResponseDto(courseInfo);
+        }
+        throw new CustomException("No existe curso con id: " + idCourse);
+
+    }
+
     public GetCourseResponseDto createCourse(CreateCourseRequestDto dto){
         Course course = new Course();
         course.setName(dto.getCourseName());
         course.setDescription(null != dto.getDescription() ? dto.getDescription(): "");
-        course.setCode(null != dto.getCode() ? dto.getDescription(): "");
+        course.setCode(null != dto.getCode() ? dto.getCode(): "");
         if(null != dto.getFileContent() && null != dto.getFileType()){
             course.setMicrocurriculum(dto.getFileContent());
             course.setDocType(dto.getFileType().equalsIgnoreCase(DocType.WORD.name()) ? DocType.WORD : DocType.PDF);
@@ -67,7 +76,7 @@ public class CourseService {
             course.setDescription(dto.getDescription());
         }
         if(Utilities.isNotNullOrEmptyString(dto.getCode())){
-            course.setCode(dto.getDescription());
+            course.setCode(dto.getCode());
         }
         if(null != dto.getFileContent() && null != dto.getFileType()){
             course.setMicrocurriculum(dto.getFileContent());

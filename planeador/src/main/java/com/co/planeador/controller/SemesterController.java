@@ -108,4 +108,11 @@ public class SemesterController {
         return new ResponseEntity<>(semesters, HttpStatus.OK);
     }
 
+    @SessionRequired
+    @GetMapping("/id")
+    @Operation(summary = "Obtiene info del semestre por su id", description = "Requiere Sesión")
+    public ResponseEntity<Semester> getSemesterById(@RequestParam("idSemester") Integer idSemester){
+        Semester semester = semesterService.getSemesterById(idSemester);
+        return new ResponseEntity<>(semester, HttpStatus.OK);
+    }
 }
