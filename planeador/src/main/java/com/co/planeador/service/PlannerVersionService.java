@@ -1,6 +1,7 @@
 package com.co.planeador.service;
 
 import com.co.planeador.controller.dto.response.GetVersionResponseDto;
+import com.co.planeador.exception.CustomException;
 import com.co.planeador.repository.dao.PlannerVersionRepository;
 import com.co.planeador.repository.entities.PlannerVersion;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,11 @@ public class PlannerVersionService {
     public List<GetVersionResponseDto> getAllVersions(){
         List<PlannerVersion> plannerVersionList = repository.findAll();
         return plannerVersionList.stream().map(this::mapPlannerVersionToDto).toList();
+    }
+
+    public PlannerVersion getPlannerVersionDetail(int plannerVersionId){
+        return repository.findById(plannerVersionId).
+                orElseThrow(() -> new CustomException("No se encontró planeador con id: " + plannerVersionId));
     }
 
     private GetVersionResponseDto mapPlannerVersionToDto(PlannerVersion plannerVersion){
