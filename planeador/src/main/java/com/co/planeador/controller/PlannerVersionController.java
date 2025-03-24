@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,6 +46,20 @@ public class PlannerVersionController {
     public ResponseEntity<PlannerVersion> createPlannerVersion(@RequestBody CreatePlannerVersionRequestDto dto){
         PlannerVersion response = service.createPlannerVersion(dto);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DirectorRequired
+    @GetMapping("/default")
+    public ResponseEntity<String> setVersionToDefault(@RequestParam("versionId") Integer versionId){
+        service.setDefaultVersion(versionId);
+        return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
+    }
+
+    @DirectorRequired
+    @DeleteMapping()
+    public ResponseEntity<String> deleteVersion(@RequestParam("versionId") Integer versionId){
+        service.deleteVersion(versionId);
+        return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
     }
 
 }

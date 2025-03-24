@@ -3,12 +3,17 @@ package com.co.planeador.service;
 import com.co.planeador.controller.dto.request.CreatePlannerVersionRequestDto;
 import com.co.planeador.controller.dto.response.GetVersionResponseDto;
 import com.co.planeador.exception.CustomException;
+import com.co.planeador.repository.dao.AssignmentDao;
+import com.co.planeador.repository.dao.PlannerRepository;
 import com.co.planeador.repository.dao.PlannerVersionRepository;
+import com.co.planeador.repository.entities.Assignment;
+import com.co.planeador.repository.entities.Planner;
 import com.co.planeador.repository.entities.PlannerVersion;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -16,6 +21,8 @@ import java.util.stream.Collectors;
 public class PlannerVersionService {
 
     private final PlannerVersionRepository repository;
+    private final AssignmentDao assignmentDao;
+    private final PlannerRepository plannerRepository;
 
     public List<GetVersionResponseDto> getAllVersions(){
         List<PlannerVersion> plannerVersionList = repository.findAll();
@@ -29,9 +36,34 @@ public class PlannerVersionService {
 
     public PlannerVersion createPlannerVersion(CreatePlannerVersionRequestDto dto){
         validateCreatePlannerVersionInput(dto);
-        checkDefaultVersions(dto);
+        if(dto.isDefaultVersion()){
+            setAllDefaultVersionsToFalse();
+        }
         PlannerVersion plannerVersion = mapDtoToPlannerVersion(dto);
         return repository.save(plannerVersion);
+    }
+
+    public void setDefaultVersion(Integer versionId){
+        PlannerVersion plannerVersion = this.getPlannerVersionDetail(versionId);
+        setAllDefaultVersionsToFalse();
+        plannerVersion.setDefaultVersion(Boolean.TRUE);
+        repository.save(plannerVersion);
+    }
+
+    public void deleteVersion(Integer versionId){
+        validateNoneOfAssignmentsUseThePlannerVersion(versionId);
+        repository.deleteById(versionId);
+    }
+
+    private void validateNoneOfAssignmentsUseThePlannerVersion(Integer versionId){
+        List<Assignment> allAssignments = assignmentDao.findAll();
+        Set<Integer> plannerIds = allAssignments.stream().map(Assignment::getPlannerId).collect(Collectors.toSet());
+        List<Planner> planners = plannerRepository.findAllById(plannerIds);
+        boolean existsPlannerThatUseThisVersion = planners.stream().map(planner -> planner.getPlannerVersion().getId()).
+                anyMatch(plannerVersionId -> plannerVersionId.equals(versionId));
+        if(existsPlannerThatUseThisVersion){
+            throw new CustomException("Existen asignaciones que utilizan esta versión de planeador");
+        }
     }
 
     private PlannerVersion mapDtoToPlannerVersion(CreatePlannerVersionRequestDto dto){
@@ -48,19 +80,12 @@ public class PlannerVersionService {
         }
     }
 
-    private void checkDefaultVersions(CreatePlannerVersionRequestDto dto){
+    private void setAllDefaultVersionsToFalse(){
         List<PlannerVersion> allPlannerVersions = repository.findAll();
-        if(allPlannerVersions.isEmpty()){
-            dto.setDefaultVersion(Boolean.TRUE);
-        }
-        else{
-            boolean existsDefaultVersion = allPlannerVersions.stream().anyMatch(PlannerVersion::isDefaultVersion);
-            if(!existsDefaultVersion){
-                dto.setDefaultVersion(Boolean.TRUE);
-            } else if(dto.isDefaultVersion()){
-                allPlannerVersions.forEach(plannerVersion -> plannerVersion.setDefaultVersion(Boolean.FALSE));
-                repository.saveAll(allPlannerVersions);
-            }
+        boolean existsDefaultVersion = allPlannerVersions.stream().anyMatch(PlannerVersion::isDefaultVersion);
+        if(existsDefaultVersion){
+            allPlannerVersions.forEach(plannerVersion -> plannerVersion.setDefaultVersion(Boolean.FALSE));
+            repository.saveAll(allPlannerVersions);
         }
     }
 
