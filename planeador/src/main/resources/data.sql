@@ -62,25 +62,24 @@ INSERT INTO planner_version (name, is_default_version) VALUES
 ('Versión 2024', false),
 ('Versión 2025', true);
 
--- Insertar descripciones de columnas para
-INSERT INTO column_description_map (planner_version_id, column_name, column_description) VALUES
-(1, 'Objetivos', 'Objetivos de la actividad planeada'),
-(1, 'Temas', 'Temas a presentar'),
-(1, 'Actividades', 'Las actividades realizadas en el tiempo de aula'),
-(1, 'Instrumentos de evaluación', 'Cómo se evalúan los temas presentados'),
-(1, 'Tipo de evidencia de aprendizaje', 'Cómo se evidencia lo que el estudiante aprendió'),
-(1, 'Corte', 'El periodo o corte en que se hace la actividad');
 
--- Insertar descripciones de columnas para la versión avanzada (4 columnas)
-INSERT INTO column_description_map (planner_version_id, column_name, column_description) VALUES
-(2, 'RA  Curso', 'Lo que se espera que el estudiante aprenda'),
-(2, 'Criterio desempeño', '(evidencia , la razon del aprendizaje , que debe demostrar el estudiante)'),
-(2, 'Temas', ''),
-(2, 'Actividades pedagógicas', 'Actividad que el profesor va a desarrollar'),
-(2, 'Instrumento de evaluación', 'Estrategia de evaluacion (como lo evalua el profesor)'),
-(2, 'Tipo de Evidencia de Aprendizaje', 'Entregas por parte de los estudiantes'),
-(2, 'Peso de la estrategia de evaluacion', 'Valor que le asigna a la tarea o actividad'),
-(2, 'Periodo de evlauacion', 'Primer Previo -  Segundo Previo - Tercer Previo - Examen final');
+INSERT INTO column_description_map (planner_version_id, column_order, column_name, column_description) VALUES
+(1, 0, 'Objetivos', 'Objetivos de la actividad planeada'),
+(1, 1, 'Temas', 'Temas a presentar'),
+(1, 2, 'Actividades', 'Las actividades realizadas en el tiempo de aula'),
+(1, 3, 'Instrumentos de evaluación', 'Cómo se evalúan los temas presentados'),
+(1, 4, 'Tipo de evidencia de aprendizaje', 'Cómo se evidencia lo que el estudiante aprendió'),
+(1, 5, 'Corte', 'El periodo o corte en que se hace la actividad');
+
+INSERT INTO column_description_map (planner_version_id, column_order, column_name, column_description) VALUES
+(2, 0, 'RA  Curso', 'Lo que se espera que el estudiante aprenda'),
+(2, 1, 'Criterio desempeño', '(evidencia , la razon del aprendizaje , que debe demostrar el estudiante)'),
+(2, 2, 'Temas', ''),
+(2, 3, 'Actividades pedagógicas', 'Actividad que el profesor va a desarrollar'),
+(2, 4, 'Instrumento de evaluación', 'Estrategia de evaluacion (como lo evalua el profesor)'),
+(2, 5, 'Tipo de Evidencia de Aprendizaje', 'Entregas por parte de los estudiantes'),
+(2, 6, 'Peso de la estrategia de evaluacion', 'Valor que le asigna a la tarea o actividad'),
+(2, 7, 'Periodo de evlauacion', 'Primer Previo -  Segundo Previo - Tercer Previo - Examen final');
 
 -- Insertar planners
 INSERT INTO planner (planner_version_id) VALUES
