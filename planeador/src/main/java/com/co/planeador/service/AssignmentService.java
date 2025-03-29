@@ -10,6 +10,7 @@ import com.co.planeador.repository.dao.ProfileDao;
 import com.co.planeador.repository.dao.SemesterDao;
 import com.co.planeador.repository.dto.CourseInfoDto;
 import com.co.planeador.repository.entities.Assignment;
+import com.co.planeador.repository.entities.Planner;
 import com.co.planeador.repository.entities.Profile;
 import com.co.planeador.repository.entities.ProfileType;
 import com.co.planeador.repository.entities.Teacher;
@@ -30,6 +31,7 @@ public class AssignmentService {
     private final ProfileDao profileDao;
     private final CourseDao courseDao;
     private final SemesterDao semesterDao;
+    private final PlannerService plannerService;
 
     public List<GetAssignmentForDirectorResponseDto> getSemesterAssignments(Integer semesterId, Integer pageNumber, Integer pageSize){
         List<GetAssignmentForDirectorResponseDto> responseDtoList = new ArrayList<>();
@@ -72,6 +74,8 @@ public class AssignmentService {
         assignment.setGroupName(dto.getGroup());
         assignment.setTeacherId(dto.getTeacherId());
         assignment.setSemesterId(dto.getSemesterId());
+        Integer plannerId = plannerService.createNewPlanner(dto.getPlannerVersionId()).getId();
+        assignment.setPlannerId(plannerId);
         Assignment assignmentSaved = assignmentDao.save(assignment);
         return buildGetAssignmentForDirectorResponseDto(assignmentSaved);
     }
@@ -126,6 +130,7 @@ public class AssignmentService {
         dto.setGroup(assignment.getGroupName());
         dto.setCourseName(courseInfoDto.getName());
         dto.setTeacherName(teacher.getName());
+
         return dto;
     }
 
