@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -52,6 +53,16 @@ public class PlannerController {
                                                             @RequestBody UpdatePlannerRowRequestDto dto){
         Integer userId = JwtUtil.getIdFromToken( token.substring(7));
         GetPlannerResponseDto response = service.updatePlanner(userId, dto);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @TeacherRequired
+    @DeleteMapping
+    public ResponseEntity<GetPlannerResponseDto> deleteRow(@RequestHeader("Authorization") @Parameter(hidden = true) String token,
+                                                           @RequestParam("plannerId") Integer plannerId,
+                                                           @RequestParam("rowPosition") Integer rowPosition){
+        Integer userId = JwtUtil.getIdFromToken( token.substring(7));
+        GetPlannerResponseDto response = service.deletePlannerRow(userId, plannerId, rowPosition);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

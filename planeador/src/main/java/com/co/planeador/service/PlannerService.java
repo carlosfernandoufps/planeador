@@ -38,6 +38,8 @@ public class PlannerService {
     private final ProfileDao profileDao;
     private final CourseDao courseDao;
 
+    private static final String PLANNER_NOT_FOUND_MESSAGE = "Planeador no encontrado";
+
     public Planner createNewPlanner(Integer plannerVersionId){
         PlannerVersion plannerVersion = plannerVersionService.getPlannerVersionDetail(plannerVersionId);
         Planner planner = new Planner();
@@ -49,13 +51,13 @@ public class PlannerService {
         Assignment assignment  = assignmentDao.findById(assignmentId).orElseThrow(() ->
                 new CustomException("Asignación con id: " + assignmentId + " no encontrada"));
         Planner planner = repository.findById(assignment.getPlannerId()).orElseThrow(() ->
-                new CustomException("Planeador no encontrado"));
+                new CustomException(PLANNER_NOT_FOUND_MESSAGE));
         return mapPlannerToDetailDtoResponse(planner, assignment);
     }
 
     public GetPlannerResponseDto saveNewRow(Integer userId, SaveNewRowRequestDto dto){
         Planner planner = repository.findById(dto.getPlannerId()).
-                orElseThrow(() -> new CustomException("Planeador no encontrado"));
+                orElseThrow(() -> new CustomException(PLANNER_NOT_FOUND_MESSAGE));
         validateIsPlannerEditable(userId, dto.getPlannerId());
         planner.getRows().add(createNewPlannerRow(planner, dto.getData()));
         return mapPlannerToDtoResponse(repository.save(planner));
@@ -63,10 +65,19 @@ public class PlannerService {
 
     public GetPlannerResponseDto updatePlanner(Integer userId, UpdatePlannerRowRequestDto dto){
         Planner planner = repository.findById(dto.getPlannerId()).
-                orElseThrow(() -> new CustomException("Planeador no encontrado"));
+                orElseThrow(() -> new CustomException(PLANNER_NOT_FOUND_MESSAGE));
         validateIsPlannerEditable(userId, dto.getPlannerId());
         validateRowExists(planner, dto.getRowPosition());
         planner.getRows().get(dto.getRowPosition()).setCells(dto.getData());
+        return mapPlannerToDtoResponse(repository.save(planner));
+    }
+
+    public GetPlannerResponseDto deletePlannerRow(Integer userId, Integer plannerId, int rowPosition){
+        Planner planner = repository.findById(plannerId).
+                orElseThrow(() -> new CustomException(PLANNER_NOT_FOUND_MESSAGE));
+        validateIsPlannerEditable(userId, plannerId);
+        validateRowExists(planner, rowPosition);
+        planner.getRows().remove(rowPosition);
         return mapPlannerToDtoResponse(repository.save(planner));
     }
 
