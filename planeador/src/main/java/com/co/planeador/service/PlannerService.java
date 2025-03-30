@@ -1,6 +1,7 @@
 package com.co.planeador.service;
 
 import com.co.planeador.controller.dto.request.SaveNewRowRequestDto;
+import com.co.planeador.controller.dto.request.UpdatePlannerRowRequestDto;
 import com.co.planeador.controller.dto.response.GetAssignmentForDirectorResponseDto;
 import com.co.planeador.controller.dto.response.GetPlannerDetailResponseDto;
 import com.co.planeador.controller.dto.response.GetPlannerResponseDto;
@@ -58,6 +59,21 @@ public class PlannerService {
         validateIsPlannerEditable(userId, dto.getPlannerId());
         planner.getRows().add(createNewPlannerRow(planner, dto.getData()));
         return mapPlannerToDtoResponse(repository.save(planner));
+    }
+
+    public GetPlannerResponseDto updatePlanner(Integer userId, UpdatePlannerRowRequestDto dto){
+        Planner planner = repository.findById(dto.getPlannerId()).
+                orElseThrow(() -> new CustomException("Planeador no encontrado"));
+        validateIsPlannerEditable(userId, dto.getPlannerId());
+        validateRowExists(planner, dto.getRowPosition());
+        planner.getRows().get(dto.getRowPosition()).setCells(dto.getData());
+        return mapPlannerToDtoResponse(repository.save(planner));
+    }
+
+    private void validateRowExists(Planner planner, int rowPosition){
+        if(planner.getRows().size() <= rowPosition){
+            throw new CustomException("Fila solicitada no existe");
+        }
     }
 
     private void validateIsPlannerEditable(Integer userId, Integer plannerId){
