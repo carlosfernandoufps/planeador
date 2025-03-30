@@ -130,7 +130,6 @@ public class AssignmentService {
         dto.setGroup(assignment.getGroupName());
         dto.setCourseName(courseInfoDto.getName());
         dto.setTeacherName(teacher.getName());
-
         return dto;
     }
 

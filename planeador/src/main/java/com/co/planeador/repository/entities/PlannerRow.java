@@ -1,5 +1,6 @@
 package com.co.planeador.repository.entities;
 
+import com.co.planeador.exception.CustomException;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -46,7 +47,7 @@ public class PlannerRow {
     @PreUpdate
     private void validateNumberOfCells(){
         if (cells.size() != planner.getPlannerVersion().getNumberOfColumns()) {
-            throw new IllegalStateException("Número de celdas inválido");
+            throw new CustomException("Número de celdas inválido");
         }
     }
 
