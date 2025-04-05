@@ -3,6 +3,7 @@ package com.co.planeador.service;
 import com.co.planeador.controller.dto.request.SaveNewRowRequestDto;
 import com.co.planeador.controller.dto.request.UpdatePlannerRowRequestDto;
 import com.co.planeador.controller.dto.response.GetAssignmentForDirectorResponseDto;
+import com.co.planeador.controller.dto.response.GetCompatibleGroupPlanningResponseDto;
 import com.co.planeador.controller.dto.response.GetCompatiblePlanningResponseDto;
 import com.co.planeador.controller.dto.response.GetPlannerDetailResponseDto;
 import com.co.planeador.controller.dto.response.GetPlannerResponseDto;
@@ -27,7 +28,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -106,6 +106,32 @@ public class PlannerService {
                 .toList();
 
         return compatibleAssignments.stream().map(this::mapAssignmentToDto).toList();
+    }
+
+    public List<GetCompatibleGroupPlanningResponseDto> getCompatibleGroupOfSameSemester(Integer plannerId){
+        Planner planner = repository.findById(plannerId).
+                orElseThrow(() -> new CustomException(PLANNER_NOT_FOUND_MESSAGE));
+        Semester activeSemester = semesterService.getActiveSemester();
+        Assignment assignmentOfPlanner = assignmentDao.findOneByPlannerId(plannerId);
+        List<Assignment> assignments = assignmentDao.findBySemesterIdAndTeacherId(activeSemester.getId(), assignmentOfPlanner.getTeacherId());
+        Set<Integer> plannerIdsUsingSamePlannerVersion = repository.
+                getCompatiblePlannersIdsByVersion(planner.getPlannerVersion().getId());
+        assignments.removeIf(
+                assignment -> assignment.getPlannerId().equals(plannerId) ||
+                        !assignment.getCourseId().equals(assignmentOfPlanner.getCourseId()));
+        List<Assignment> filteredAssignments = assignments.stream().filter(assignment ->
+                plannerIdsUsingSamePlannerVersion.stream().anyMatch(plannerUsingSameVersion ->
+                                !plannerUsingSameVersion.equals(assignment.getPlannerId()))).toList();
+        List<Assignment> filteredByGroup = filteredAssignments.stream().filter(
+                assignment -> !assignmentOfPlanner.getGroupName().equals(assignment.getGroupName())).toList();
+        return filteredByGroup.stream().map(this::mapAssignmentToGroupCompatibleDto).toList();
+    }
+
+    private GetCompatibleGroupPlanningResponseDto mapAssignmentToGroupCompatibleDto(Assignment assignment){
+        GetCompatibleGroupPlanningResponseDto dto = new GetCompatibleGroupPlanningResponseDto();
+        dto.setGroup(assignment.getGroupName());
+        dto.setPlanningId(assignment.getPlannerId());
+        return dto;
     }
 
     private GetCompatiblePlanningResponseDto mapAssignmentToDto(Assignment assignment){

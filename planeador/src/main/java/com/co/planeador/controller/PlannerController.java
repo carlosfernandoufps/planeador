@@ -2,6 +2,7 @@ package com.co.planeador.controller;
 
 import com.co.planeador.controller.dto.request.SaveNewRowRequestDto;
 import com.co.planeador.controller.dto.request.UpdatePlannerRowRequestDto;
+import com.co.planeador.controller.dto.response.GetCompatibleGroupPlanningResponseDto;
 import com.co.planeador.controller.dto.response.GetCompatiblePlanningResponseDto;
 import com.co.planeador.controller.dto.response.GetPlannerDetailResponseDto;
 import com.co.planeador.controller.dto.response.GetPlannerResponseDto;
@@ -70,9 +71,16 @@ public class PlannerController {
     }
 
     @TeacherRequired
-    @GetMapping("/compatible/olds")
+    @GetMapping("/compatible/old")
     public ResponseEntity<List<GetCompatiblePlanningResponseDto>> getCompatible(@RequestParam("plannerId") Integer plannerId){
         List<GetCompatiblePlanningResponseDto> response = service.getCompatiblePlannersOfOldSemesters(plannerId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @TeacherRequired
+    @GetMapping("/compatible/group")
+    public ResponseEntity<List<GetCompatibleGroupPlanningResponseDto>> getCompatibleGroups(@RequestParam("plannerId") Integer plannerId){
+        List<GetCompatibleGroupPlanningResponseDto> response = service.getCompatibleGroupOfSameSemester(plannerId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
