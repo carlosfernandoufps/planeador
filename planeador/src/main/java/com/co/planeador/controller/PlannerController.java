@@ -2,6 +2,7 @@ package com.co.planeador.controller;
 
 import com.co.planeador.controller.dto.request.SaveNewRowRequestDto;
 import com.co.planeador.controller.dto.request.UpdatePlannerRowRequestDto;
+import com.co.planeador.controller.dto.response.GetCompatiblePlanningResponseDto;
 import com.co.planeador.controller.dto.response.GetPlannerDetailResponseDto;
 import com.co.planeador.controller.dto.response.GetPlannerResponseDto;
 import com.co.planeador.security.annotation.SessionRequired;
@@ -22,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -63,6 +66,13 @@ public class PlannerController {
                                                            @RequestParam("rowPosition") Integer rowPosition){
         Integer userId = JwtUtil.getIdFromToken( token.substring(7));
         GetPlannerResponseDto response = service.deletePlannerRow(userId, plannerId, rowPosition);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @TeacherRequired
+    @GetMapping("/compatible/olds")
+    public ResponseEntity<List<GetCompatiblePlanningResponseDto>> getCompatible(@RequestParam("plannerId") Integer plannerId){
+        List<GetCompatiblePlanningResponseDto> response = service.getCompatiblePlannersOfOldSemesters(plannerId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

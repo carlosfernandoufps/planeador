@@ -3,6 +3,7 @@ package com.co.planeador.service;
 import com.co.planeador.controller.dto.request.SaveNewRowRequestDto;
 import com.co.planeador.controller.dto.request.UpdatePlannerRowRequestDto;
 import com.co.planeador.controller.dto.response.GetAssignmentForDirectorResponseDto;
+import com.co.planeador.controller.dto.response.GetCompatiblePlanningResponseDto;
 import com.co.planeador.controller.dto.response.GetPlannerDetailResponseDto;
 import com.co.planeador.controller.dto.response.GetPlannerResponseDto;
 import com.co.planeador.controller.dto.response.ProfileResponseDto;
@@ -17,6 +18,7 @@ import com.co.planeador.repository.entities.Assignment;
 import com.co.planeador.repository.entities.Planner;
 import com.co.planeador.repository.entities.PlannerRow;
 import com.co.planeador.repository.entities.PlannerVersion;
+import com.co.planeador.repository.entities.Profile;
 import com.co.planeador.repository.entities.Semester;
 import com.co.planeador.repository.entities.Teacher;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -79,6 +83,40 @@ public class PlannerService {
         validateRowExists(planner, rowPosition);
         planner.getRows().remove(rowPosition);
         return mapPlannerToDtoResponse(repository.save(planner));
+    }
+
+    public List<GetCompatiblePlanningResponseDto> getCompatiblePlannersOfOldSemesters(Integer plannerId){
+        Planner planner = repository.findById(plannerId).
+                orElseThrow(() -> new CustomException(PLANNER_NOT_FOUND_MESSAGE));
+
+        Assignment assignment = assignmentDao.findOneByPlannerId(plannerId);
+
+        Set<Integer> plannerIdsUsingSamePlannerVersion = repository.
+                getCompatiblePlannersIdsByVersion(planner.getPlannerVersion().getId());
+
+        Semester activeSemester = semesterService.getActiveSemester();
+
+        List<Assignment> sameCourseAssignments = assignmentDao.findByCourseId(assignment.getCourseId());
+
+        List<Assignment> filteredBySemesterAssignments = sameCourseAssignments.stream().filter(sameCourseAssignment ->
+                !sameCourseAssignment.getSemesterId().equals(activeSemester.getId())).toList();
+
+        List<Assignment> compatibleAssignments = filteredBySemesterAssignments.stream()
+                .filter(sameCourseAssignment -> plannerIdsUsingSamePlannerVersion.contains(sameCourseAssignment.getPlannerId()))
+                .toList();
+
+        return compatibleAssignments.stream().map(this::mapAssignmentToDto).toList();
+    }
+
+    private GetCompatiblePlanningResponseDto mapAssignmentToDto(Assignment assignment){
+        GetCompatiblePlanningResponseDto dto = new GetCompatiblePlanningResponseDto();
+        dto.setGroup(assignment.getGroupName());
+        Semester semester = semesterService.getSemesterById(assignment.getSemesterId());
+        Profile teacher = profileDao.findById(assignment.getTeacherId()).orElseThrow(CustomException::new);
+        dto.setSemesterName(semester.getName());
+        dto.setTeacherName(teacher.getName());
+        dto.setPlanningId(assignment.getId());
+        return dto;
     }
 
     private void validateRowExists(Planner planner, int rowPosition){

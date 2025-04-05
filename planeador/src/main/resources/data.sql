@@ -84,7 +84,7 @@ INSERT INTO column_description_map (planner_version_id, column_order, column_nam
 -- Insertar planners
 INSERT INTO planner (planner_version_id) VALUES
 (1),(1),(1),
-(2),(2),(2),(2),(2),(2),(2);
+(2),(2),(2),(2),(1),(2),(2);
 
 INSERT INTO planner_row (planner_id) VALUES
 (1),(1),(2),(4),(4);
