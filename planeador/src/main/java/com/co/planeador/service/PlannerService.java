@@ -85,6 +85,11 @@ public class PlannerService {
         return mapPlannerToDtoResponse(repository.save(planner));
     }
 
+    public List<GetPlannerDetailResponseDto> getAssignmentReportOfSemester(Integer semesterId){
+        List<Assignment> assignmentsOfSemester = assignmentDao.findBySemesterId(semesterId);
+        return assignmentsOfSemester.stream().map(assignment -> this.getPlannerByAssignmentId(assignment.getId())).toList();
+    }
+
     public List<GetCompatiblePlanningResponseDto> getCompatiblePlannersOfOldSemesters(Integer plannerId){
         Planner planner = repository.findById(plannerId).
                 orElseThrow(() -> new CustomException(PLANNER_NOT_FOUND_MESSAGE));

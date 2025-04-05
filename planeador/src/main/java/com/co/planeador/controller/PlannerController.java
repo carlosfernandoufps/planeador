@@ -6,6 +6,7 @@ import com.co.planeador.controller.dto.response.GetCompatibleGroupPlanningRespon
 import com.co.planeador.controller.dto.response.GetCompatiblePlanningResponseDto;
 import com.co.planeador.controller.dto.response.GetPlannerDetailResponseDto;
 import com.co.planeador.controller.dto.response.GetPlannerResponseDto;
+import com.co.planeador.security.annotation.DirectorRequired;
 import com.co.planeador.security.annotation.SessionRequired;
 import com.co.planeador.security.annotation.TeacherRequired;
 import com.co.planeador.security.jwt.JwtUtil;
@@ -81,6 +82,13 @@ public class PlannerController {
     @GetMapping("/compatible/group")
     public ResponseEntity<List<GetCompatibleGroupPlanningResponseDto>> getCompatibleGroups(@RequestParam("plannerId") Integer plannerId){
         List<GetCompatibleGroupPlanningResponseDto> response = service.getCompatibleGroupOfSameSemester(plannerId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DirectorRequired
+    @GetMapping("/report")
+    public ResponseEntity<List<GetPlannerDetailResponseDto>> getReport(@RequestParam("semesterId") Integer semesterId){
+        List<GetPlannerDetailResponseDto> response = service.getAssignmentReportOfSemester(semesterId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
