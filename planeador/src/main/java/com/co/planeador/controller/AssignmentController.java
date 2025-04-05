@@ -45,7 +45,7 @@ public class AssignmentController {
 
     @TeacherRequired
     @GetMapping("/teacher")
-    @Operation(summary = "HU_004: Obtiene las asignaciones del semestre del docente loggeado", description = "Requiere Docente. Soporta paginación: " +
+    @Operation(summary = "HU_004/HU_031: Obtiene las asignaciones del semestre del docente loggeado", description = "Requiere Docente. Soporta paginación: " +
             "En caso de no usar paginación, devuelve todas las asignaciones del semestre. La primera página es 0")
     public ResponseEntity<List<GetAssignmentForTeacherResponseDto>> getTeacherAssignment(@RequestHeader("Authorization")
                                                                                              @Parameter(hidden = true) String token,
@@ -59,7 +59,8 @@ public class AssignmentController {
 
     @DirectorRequired
     @PostMapping()
-    @Operation(summary = "HU_015: Asigna un docente a un curso y grupo para un semestre", description = "Requiere Director")
+    @Operation(summary = "HU_015: Asigna un docente a un curso y grupo para un semestre. " +
+            "Actualización HU_028: Ahora se debe enviar el id de la versión de planeador", description = "Requiere Director")
     public ResponseEntity<GetAssignmentForDirectorResponseDto> createAssignment(@RequestBody CreateAssignmentRequestDto dto){
         GetAssignmentForDirectorResponseDto response = assignmentService.createAssignment(dto);
         return new ResponseEntity<>(response, HttpStatus.OK);
