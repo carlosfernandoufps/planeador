@@ -1,5 +1,6 @@
 package com.co.planeador.service;
 
+import com.co.planeador.controller.dto.request.SaveNewRowBatchRequestDto;
 import com.co.planeador.controller.dto.request.SaveNewRowRequestDto;
 import com.co.planeador.controller.dto.request.UpdatePlannerRowRequestDto;
 import com.co.planeador.controller.dto.response.GetAssignmentForDirectorResponseDto;
@@ -64,6 +65,16 @@ public class PlannerService {
                 orElseThrow(() -> new CustomException(PLANNER_NOT_FOUND_MESSAGE));
         validateIsPlannerEditable(userId, dto.getPlannerId());
         planner.getRows().add(createNewPlannerRow(planner, dto.getData()));
+        return mapPlannerToDtoResponse(repository.save(planner));
+    }
+
+    public GetPlannerResponseDto saveNewRowBatch(Integer userId, SaveNewRowBatchRequestDto dto){
+        Planner planner = repository.findById(dto.getPlannerId()).
+                orElseThrow(() -> new CustomException(PLANNER_NOT_FOUND_MESSAGE));
+        validateIsPlannerEditable(userId, dto.getPlannerId());
+        for(List<String> data: dto.getBatchData()){
+            planner.getRows().add(createNewPlannerRow(planner, data));
+        }
         return mapPlannerToDtoResponse(repository.save(planner));
     }
 

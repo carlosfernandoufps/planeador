@@ -1,5 +1,6 @@
 package com.co.planeador.controller;
 
+import com.co.planeador.controller.dto.request.SaveNewRowBatchRequestDto;
 import com.co.planeador.controller.dto.request.SaveNewRowRequestDto;
 import com.co.planeador.controller.dto.request.UpdatePlannerRowRequestDto;
 import com.co.planeador.controller.dto.response.GetCompatibleGroupPlanningResponseDto;
@@ -52,6 +53,16 @@ public class PlannerController {
                                                             @RequestBody SaveNewRowRequestDto dto){
         Integer userId = JwtUtil.getIdFromToken( token.substring(7));
         GetPlannerResponseDto response = service.saveNewRow(userId, dto);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @TeacherRequired
+    @PostMapping("/batch")
+    @Operation(summary = "HU_036/HU_037: Crea un lote de registros de planeación", description = "Requiere Docente")
+    public ResponseEntity<GetPlannerResponseDto> saveNewRowBatch(@RequestHeader("Authorization") @Parameter(hidden = true) String token,
+                                                            @RequestBody SaveNewRowBatchRequestDto dto){
+        Integer userId = JwtUtil.getIdFromToken( token.substring(7));
+        GetPlannerResponseDto response = service.saveNewRowBatch(userId, dto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
