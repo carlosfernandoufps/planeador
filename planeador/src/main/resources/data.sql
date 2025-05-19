@@ -1,5 +1,42 @@
 -- data.sql
 
+-- PDN
+
+INSERT INTO users (institutional_email, password)
+SELECT
+  'ingsistemas@ufps.edu.co',
+  '$2b$12$oa/AWJIz2tth05.M0wswAOZ9POZgGwe.kMMFIYAuB/zM7/WV7phRK'
+WHERE NOT EXISTS (
+  SELECT 1 FROM users WHERE institutional_email = 'ingsistemas@ufps.edu.co'
+);
+
+-- Solo inserta este perfil si no existe aún
+INSERT INTO profile (id_user, name, personal_email, phone, code, profile_type)
+SELECT
+  1,
+  'Pilar Rodriguez',
+  'pr@mail.com',
+  '444-555-6666',
+  '11500',
+  'DIRECTOR'
+WHERE NOT EXISTS (
+  SELECT 1 FROM profile WHERE id_user = 1
+);
+
+-- Solo inserta este semestre si no existe aún
+INSERT INTO semester (name, start_date, end_date)
+SELECT
+  '2025-I',
+  '2025-01-15',
+  '2025-07-01'
+WHERE NOT EXISTS (
+  SELECT 1 FROM semester WHERE name = '2025-I'
+);
+
+
+-- DEV
+
+/*
 --  Users
 
 INSERT INTO users (institutional_email, password)
@@ -170,3 +207,4 @@ VALUES (1, 3, 4, 'B', 9);
 
 INSERT INTO assignment (semester_id, teacher_id, course_id, group_name, planner_id)
 VALUES (1, 3, 5, 'A', 10);
+*/
