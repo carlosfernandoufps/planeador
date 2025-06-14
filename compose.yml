@@ -11,7 +11,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "${PORT_0}:5432"
 
   backend:
     build:
@@ -28,7 +28,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: planner_pass
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
     ports:
-      - "8080:8080"
+      - "${PORT_1}:8080"
 
   frontend:
     build:
@@ -39,7 +39,7 @@ services:
     depends_on:
       - backend
     ports:
-      - "80:80"
+      - "${PORT_2}:80"
 
 volumes:
   postgres_data:
