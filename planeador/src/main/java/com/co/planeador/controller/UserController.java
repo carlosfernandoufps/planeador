@@ -83,9 +83,9 @@ public class UserController {
     @PostMapping()
     @Operation(summary = "HU_006: Crea un nuevo usuario", description = "Requiere Director. " +
             "Solo admite los perfiles 'TEACHER' y 'DIRECTOR'")
-    public ResponseEntity<CreateUserResponseDto> createUser(@RequestBody CreateUserRequestDto dto){
-        CreateUserResponseDto responseDto = userService.createUser(dto);
-        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    public ResponseEntity<String> createUser(@RequestBody CreateUserRequestDto dto){
+        userService.createUser(dto);
+        return new ResponseEntity<>("Usuario creado exitosamente", HttpStatus.OK);
     }
 
 }

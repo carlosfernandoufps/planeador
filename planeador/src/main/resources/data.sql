@@ -2,6 +2,7 @@
 
 -- PDN
 
+/*
 INSERT INTO users (institutional_email, password)
 SELECT
   'ingsistemas@ufps.edu.co',
@@ -32,11 +33,11 @@ SELECT
 WHERE NOT EXISTS (
   SELECT 1 FROM semester WHERE name = '2025-I'
 );
-
+*/
 
 -- DEV
 
-/*
+
 --  Users
 
 INSERT INTO users (institutional_email, password)
@@ -207,4 +208,3 @@ VALUES (1, 3, 4, 'B', 9);
 
 INSERT INTO assignment (semester_id, teacher_id, course_id, group_name, planner_id)
 VALUES (1, 3, 5, 'A', 10);
-*/

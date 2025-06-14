@@ -9,14 +9,24 @@ import com.co.planeador.repository.entities.Profile;
 import com.co.planeador.repository.entities.User;
 import com.co.planeador.service.util.PasswordUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class UserService {
 
     private final UserDao userDao;
     private final ProfileService profileService;
+    private final EmailService emailService;
+    private static final String WELCOME_SUBJECT_EMAIL_MESSAGE = "Bienvenido a Planeador UFPS";
 
     public User login(String institutionalEmail, String password){
         User user = userDao.findOneByInstitutionalEmail(institutionalEmail);
@@ -42,7 +52,7 @@ public class UserService {
         userDao.save(user);
     }
 
-    public CreateUserResponseDto createUser(CreateUserRequestDto dto){
+    public void createUser(CreateUserRequestDto dto){
         if(null == dto.getInstitutionalEmail() || null == dto.getProfileType() || null == dto.getName()){
             throw new CustomException("Faltan datos requeridos");
         }
@@ -53,11 +63,29 @@ public class UserService {
         user.setInstitutionalEmail(dto.getInstitutionalEmail());
         User userSaved = userDao.save(user);
         Profile profileSaved = profileService.createProfile(userSaved.getId(), dto);
-        CreateUserResponseDto responseDto = new CreateUserResponseDto();
-        responseDto.setName(profileSaved.getName());
-        responseDto.setInstitutionalEmail(userSaved.getInstitutionalEmail());
-        responseDto.setPassword(password);
-        return responseDto;
+        sendEmail(profileSaved.getName(), user.getInstitutionalEmail(), password);
+    }
+
+    private void sendEmail(String userName, String institutionalEmail, String password){
+        try{
+            String emailBody = buildEmailBody(userName, institutionalEmail, password);
+            emailService.sendHtmlEmail(institutionalEmail, WELCOME_SUBJECT_EMAIL_MESSAGE, emailBody);
+        } catch (CustomException ex){
+            log.error("Error sending email");
+        }
+    }
+
+    private String buildEmailBody(String userName, String institutionalEmail, String password) {
+        try{
+            ClassPathResource htmlResource = new ClassPathResource("templates/welcome-email.html");
+            String html = StreamUtils.copyToString(htmlResource.getInputStream(), StandardCharsets.UTF_8);
+
+            return html.replace("${user_name}", userName)
+                    .replace("${institutional_email}", institutionalEmail)
+                    .replace("${password}", password);
+        } catch (IOException ex){
+            throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al crear email");
+        }
     }
 
 }
