@@ -2,7 +2,7 @@ package com.co.planeador.service;
 
 import com.co.planeador.controller.dto.request.CreateUserRequestDto;
 import com.co.planeador.controller.dto.request.UpdatePasswordRequestDto;
-import com.co.planeador.controller.dto.response.CreateUserResponseDto;
+import com.co.planeador.controller.dto.request.UpdatePasswordUsingOtpRequestDto;
 import com.co.planeador.exception.CustomException;
 import com.co.planeador.repository.dao.UserDao;
 import com.co.planeador.repository.entities.Profile;
@@ -26,7 +26,9 @@ public class UserService {
     private final UserDao userDao;
     private final ProfileService profileService;
     private final EmailService emailService;
+    private final OTPService otpService;
     private static final String WELCOME_SUBJECT_EMAIL_MESSAGE = "Bienvenido a Planeador UFPS";
+    private static final String ONE_TIME_CODE_MESSAGE = "Código para actualizar contraseña Planeador UFPS";
 
     public User login(String institutionalEmail, String password){
         User user = userDao.findOneByInstitutionalEmail(institutionalEmail);
@@ -50,6 +52,40 @@ public class UserService {
         String encryptedPassword = PasswordUtil.encodePassword(dto.getNewPassword());
         user.setPassword(encryptedPassword);
         userDao.save(user);
+    }
+
+    public void updatePasswordUsingOTP(UpdatePasswordUsingOtpRequestDto dto){
+        User user = userDao.findOneByInstitutionalEmail(dto.getInstitutionalEmail());
+        if(null == user){
+            throw new CustomException("No existe usuario con correo provisto");
+        }
+        boolean isOtpValid = otpService.validateOtp(dto.getInstitutionalEmail(), dto.getOtp());
+        if(!isOtpValid) {
+            throw new CustomException("OTP inválido");
+        }
+        String encryptedPassword = PasswordUtil.encodePassword(dto.getNewPassword());
+        user.setPassword(encryptedPassword);
+        userDao.save(user);
+    }
+
+    public void generateOtp(String institutionalEmail){
+        User user = userDao.findOneByInstitutionalEmail(institutionalEmail);
+        if(null == user){
+            throw new CustomException("No existe usuario con correo provisto");
+        }
+        String otp = otpService.generateOtp(institutionalEmail);
+        sendOtpByEmail(institutionalEmail, otp);
+    }
+
+    private void sendOtpByEmail(String institutionalEmail, String otp){
+        try{
+            ClassPathResource htmlResource = new ClassPathResource("templates/otp.html");
+            String html = StreamUtils.copyToString(htmlResource.getInputStream(), StandardCharsets.UTF_8);
+            String emailBody = html.replace("${OTP_CODE}", otp);
+            emailService.sendHtmlEmail(institutionalEmail, ONE_TIME_CODE_MESSAGE, emailBody);
+        } catch (IOException ex){
+            throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al enviar OTP");
+        }
     }
 
     public void createUser(CreateUserRequestDto dto){

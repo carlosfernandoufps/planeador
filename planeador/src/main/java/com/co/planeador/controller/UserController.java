@@ -2,6 +2,7 @@ package com.co.planeador.controller;
 
 import com.co.planeador.controller.dto.request.CreateUserRequestDto;
 import com.co.planeador.controller.dto.request.UpdatePasswordRequestDto;
+import com.co.planeador.controller.dto.request.UpdatePasswordUsingOtpRequestDto;
 import com.co.planeador.controller.dto.request.UpdateProfileRequestDto;
 import com.co.planeador.controller.dto.response.CreateUserResponseDto;
 import com.co.planeador.controller.dto.response.ProfileResponseDto;
@@ -88,4 +89,18 @@ public class UserController {
         return new ResponseEntity<>("Usuario creado exitosamente", HttpStatus.OK);
     }
 
+    @GetMapping("/otp")
+    @Operation(summary = "HU_040: Obtener código OTP", description = "Obtiene código para poder cambiar contraseña" +
+            " sin estar autenticado")
+    public ResponseEntity<String> getOTP(@RequestParam("institutionalEmail") String institutionalEmail){
+        userService.generateOtp(institutionalEmail);
+        return new ResponseEntity<>("Código único para actualizar contraseña enviado por correo de manera exitosa", HttpStatus.OK);
+    }
+
+    @PostMapping("/otp")
+    @Operation(summary = "HU_041: Cambiar contraseña con OTP", description = "No requiere sesión.")
+    public ResponseEntity<String> validateOtp(@RequestBody UpdatePasswordUsingOtpRequestDto dto){
+        userService.updatePasswordUsingOTP(dto);
+        return new ResponseEntity<>("Contraseña actualizada exitosamente", HttpStatus.OK);
+    }
 }
