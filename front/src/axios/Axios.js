@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const conexionAxios = axios.create({
-    baseURL: "http://localhost:8080/", // Cambia por la URL base de tu API
+    baseURL: "https://backend.planner.proyectosufps.duckdns.org/", // Cambia por la URL base de tu API
 });
 
 conexionAxios.interceptors.request.use((config) => {
